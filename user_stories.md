@@ -1,175 +1,295 @@
-# User Story Template
-**Title:**
-_As a [user role], I want [feature/goal], so that [reason]._
+# User Stories
+---
 
+# Admin User Stories
+
+## User Story 1
+**Title:**  
+_As an admin, I want to log into the portal with my username and password, so that I can manage the platform securely._
 
 **Acceptance Criteria:**
-1. [Criteria 1]
-2. [Criteria 2]
-3. [Criteria 3]
+1. The admin can enter valid credentials to access the portal.
+2. Invalid login attempts are rejected with proper error messages.
+3. The admin is redirected to the dashboard upon successful login.
 
+**Priority:** High  
+**Story Points:** 3  
 
-## Admin
-
-**Priority:** [High/Medium/Low]
-**Story Points:** [Estimated Effort in Points]
 **Notes:**
-- [Additional information or edge cases]
+- Ensure secure authentication (consider hashing passwords).
 
+---
 
-Title: User Story 1: Admin Login #1
-_As an admin, I want to log into the portal, so that I can securely manage the platform
-Acceptance Criteria:
+## User Story 2
+**Title:**  
+_As an admin, I want to log out of the portal, so that I can protect system access._
 
-Admin enters valid credentials and is authenticated
-Failed login shows a descriptive error message
-Session persists across views until logout
-Priority: [High]
-Story Points: [3]
-Notes:
-[Additional information or edge cases]
-Consider hashing passwords in the backend
-Track failed login attempts for auditing
+**Acceptance Criteria:**
+1. The admin can click a logout button.
+2. The session is terminated upon logout.
+3. The admin is redirected to the login page after logout.
 
+**Priority:** High  
+**Story Points:** 2  
 
+**Notes:**
+- Session timeout should also trigger logout.
 
-Title: User Story 2: Admin Logout #2
-_As an admin, I want to log out of the protal, so that I can prevent unauthorized access to sensitive data
-Acceptance Criteria:
+---
 
-Logout button is accessible from all dashboard views
-Session is destroyed on logout
-User is redirected to login screen
-Priority: [High]
-Story Points: [ 2 points]
-Notes:
-[Additional information or edge cases]
-Invalidate session tokens and cookies
+## User Story 3
+**Title:**  
+_As an admin, I want to add doctors to the portal, so that I can onboard new medical staff._
 
+**Acceptance Criteria:**
+1. The admin can enter and submit new doctor details.
+2. The system validates all required fields.
+3. The doctor profile is visible to patients after addition.
 
+**Priority:** High  
+**Story Points:** 5  
 
-Title:User Story 3: Add Doctor Profile #3
-_As an admin, I want to add doctors to the portal, so that new practitioners can be registered and made available for appointments.
-Acceptance Criteria:
+**Notes:**
+- Ensure email uniqueness and role assignment.
 
-Admin can access a form to create a doctor profile
-Form includes name, specialization, contact, and availability
-New profile is persisted in MySQL and confirmed via a success message
-Priority: [Medium]
-Story Points: [3 points]
-Notes:
-[Additional information or edge cases]
-Validate inputs to prevent duplicates
-Optionally send welcome emails
+---
 
+## User Story 4
+**Title:**  
+_As an admin, I want to delete a doctor's profile from the portal, so that I can manage active users._
 
+**Acceptance Criteria:**
+1. The admin can view the list of doctors.
+2. The admin can select and delete a doctor's profile.
+3. Deleted doctors are removed from the patient view.
 
-Title:User Story 4: Delete Doctor Profile #4
-_As an admin, I want to delete a doctor's profile from the portal, so that I can remove outdated or invalid entries.
-Acceptance Criteria:
+**Priority:** Medium  
+**Story Points:** 4  
 
-Admin can select a doctor and delete their profile
-System prompts for confirmation before deletion
-Deleted records are removed or archived for auditing
-Priority: [Medium]
-Story Points: [3]
-Notes:
-[Additional information or edge cases]
-Check for dependencies like appointments before deletion
+**Notes:**
+- Deletion should trigger appointment cancellation logic.
 
+---
 
+## User Story 5
+**Title:**  
+_As an admin, I want to run a stored procedure in MySQL CLI to get the number of appointments per month, so that I can track usage statistics._
 
-Title:User Story 5: Run Stored Procedure for Appointment Stats #5
-As an admin, I want to run a stored procedure from the MySQL CLI to get monthly appointment stats, so that I can monitor clinic usage over time.
-Acceptance Criteria:
+**Acceptance Criteria:**
+1. The stored procedure can be called from the MySQL CLI.
+2. The procedure correctly calculates monthly appointment counts.
+3. The system can export the results if needed.
 
-Stored procedure accepts month/year parameters
-Outputs count of appointments per doctor or department
-Results are structured and easy to export
-Priority: [Low]
-Story Points: [2 poitns]
-Notes:
-[Additional information or edge cases]
-Consider automating the report via cron job
-Optimize query performance for large datasets
+**Priority:** Low  
+**Story Points:** 3  
 
+**Notes:**
+- Optional integration with a dashboard in the future.
 
+---
 
-## Doctors
+# Patient User Stories
 
+## User Story 1
+**Title:**  
+_As a patient, I want to view a list of doctors without logging in, so that I can explore options before registering._
 
-Title:User Story 1: View Doctors Without Logging In #6
-As a patient, I want to view a list of doctors without logging in, so that I can explore my options before registering.
-Acceptance Criteria:
+**Acceptance Criteria:**
+1. The doctor list is publicly accessible.
+2. Patients can view specialization and contact information.
+3. Only active doctors are displayed.
 
-Doctor list is publicly accessible on the landing page
-Displays name, specialization, and availability
-Navigation prompts user to register or log in for bookings
-Priority: [Medium]
-Story Points: [2]
-Notes:
-[Additional information or edge cases]
-Consider adding search and filter options
+**Priority:** High  
+**Story Points:** 3  
 
+**Notes:**
+- Support filtering by specialization.
 
+---
 
-Title:User Story 2: Patient Signup #7
-As a patient, I want to sign up using my email and password, so that I can book appointments through the portal.
-Acceptance Criteria:
+## User Story 2
+**Title:**  
+_As a patient, I want to sign up using my email and password, so that I can book appointments._
 
-Signup form validates email and strong password
-Successful signup creates a patient profile
-Confirmation message or redirect to dashboard
-Priority: [High]
-Story Points: [3]
-Notes:
-[Additional information or edge cases]
-Hash passwords and check for duplicates
+**Acceptance Criteria:**
+1. The patient can register with a valid email and password.
+2. The system sends a confirmation or welcome message.
+3. Duplicate email registrations are rejected.
 
+**Priority:** High  
+**Story Points:** 4  
 
-Title: User Story 3: Patient Login and Booking Management #8
-As a patient, I want to log into the portal, so that I can manage my upcoming bookings.
-Acceptance Criteria:
+**Notes:**
+- Consider email verification in the future.
 
-Login screen accepts valid credentials
-Redirects to dashboard showing appointments
-Invalid login shows error message
-Priority: [High]
-Story Points: [2]
-Notes:
-[Additional information or edge cases]
-Track session state across different pages
+---
 
+## User Story 3
+**Title:**  
+_As a patient, I want to log into the portal, so that I can manage my bookings._
 
+**Acceptance Criteria:**
+1. The patient can log in using registered credentials.
+2. Failed login attempts are properly handled.
+3. Login redirects to the patient dashboard.
 
+**Priority:** High  
+**Story Points:** 3  
 
-Title: User Story 4: Patient Logout #9
-As a patient, I want to log out of the portal, so that I can secure my account after managing appointments.
-Acceptance Criteria:
+**Notes:**
+- Should implement session management.
 
-Logout button is available from all views
-2.Session is invalidated after logout
-Redirect to login or public home page
-Priority: [Medium]
-Story Points: [1]
-Notes:
-[Additional information or edge cases]
-Support auto-logout on timeout for extra security
+---
 
+## User Story 4
+**Title:**  
+_As a patient, I want to log out of the portal, so that I can secure my account._
 
-Title: User Story 5: Book Hour-Long Appointment #10
-As a patient, I want to book an hour-long appointment with a doctor, so that I can consult effectively about my health.
-Acceptance Criteria:
+**Acceptance Criteria:**
+1. The patient can click a logout button.
+2. The session is terminated upon logout.
+3. The system redirects to the homepage.
 
-Appointment form allows selecting duration and doctor
-Conflicts with existing bookings are prevented
-Booking is saved and confirmed with timestamp
-Priority: [High]
-Story Points: [3]
-Notes:
-[Additional information or edge cases]
-Optionally send confirmation email or SMS
+**Priority:** High  
+**Story Points:** 2  
 
+**Notes:**
+- Session timeout should log out inactive users.
 
+---
 
-......
+## User Story 5
+**Title:**  
+_As a patient, I want to book an hour-long appointment, so that I can consult with a doctor._
+
+**Acceptance Criteria:**
+1. The patient can select an available slot.
+2. The system confirms and saves the appointment.
+3. The booked slot becomes unavailable for others.
+
+**Priority:** High  
+**Story Points:** 5  
+
+**Notes:**
+- Validate doctor availability.
+
+---
+
+## User Story 6
+**Title:**  
+_As a patient, I want to view my upcoming appointments, so that I can prepare accordingly._
+
+**Acceptance Criteria:**
+1. Patients can view a list of their future appointments.
+2. Details include date, time, doctor name, and status.
+3. Canceled or past appointments are not shown.
+
+**Priority:** Medium  
+**Story Points:** 3  
+
+**Notes:**
+- Consider adding reminder notifications later.
+
+---
+
+# Doctor User Stories
+
+## User Story 1
+**Title:**  
+_As a doctor, I want to log into the portal, so that I can manage my appointments._
+
+**Acceptance Criteria:**
+1. The doctor can log in with valid credentials.
+2. Invalid logins show an error message.
+3. The doctor is redirected to their dashboard after login.
+
+**Priority:** High  
+**Story Points:** 3  
+
+**Notes:**
+- Secure authentication is required.
+
+---
+
+## User Story 2
+**Title:**  
+_As a doctor, I want to log out of the portal, so that I can protect my data._
+
+**Acceptance Criteria:**
+1. The doctor can click a logout button.
+2. The session is terminated and the doctor is redirected.
+3. Inactive sessions expire automatically.
+
+**Priority:** High  
+**Story Points:** 2  
+
+**Notes:**
+- Follow best practices for session handling.
+
+---
+
+## User Story 3
+**Title:**  
+_As a doctor, I want to view my appointment calendar, so that I can stay organized._
+
+**Acceptance Criteria:**
+1. The calendar displays all upcoming appointments.
+2. Appointments are shown with patient names and times.
+3. The doctor can filter by day, week, or month.
+
+**Priority:** High  
+**Story Points:** 5  
+
+**Notes:**
+- Integration with external calendars is optional for later.
+
+---
+
+## User Story 4
+**Title:**  
+_As a doctor, I want to mark my unavailability, so that patients only see available slots._
+
+**Acceptance Criteria:**
+1. The doctor can select and block unavailable time slots.
+2. Blocked slots are not shown to patients.
+3. Patients with existing appointments in blocked slots are notified.
+
+**Priority:** High  
+**Story Points:** 5  
+
+**Notes:**
+- Should handle conflicts gracefully.
+
+---
+
+## User Story 5
+**Title:**  
+_As a doctor, I want to update my profile with specialization and contact information, so that patients have up-to-date information._
+
+**Acceptance Criteria:**
+1. The doctor can update their name, specialization, and contact details.
+2. Changes are immediately reflected in the doctor directory.
+3. Profile updates are validated before saving.
+
+**Priority:** Medium  
+**Story Points:** 4  
+
+**Notes:**
+- Admin should be able to override doctor profiles if necessary.
+
+---
+
+## User Story 6
+**Title:**  
+_As a doctor, I want to view patient details for upcoming appointments, so that I can be prepared._
+
+**Acceptance Criteria:**
+1. The doctor can access patient details for scheduled appointments.
+2. Patient history and notes are displayed securely.
+3. The system restricts access to only the doctor’s assigned patients.
+
+**Priority:** High  
+**Story Points:** 4  
+
+**Notes:**
+- Ensure patient privacy and role-based access control.

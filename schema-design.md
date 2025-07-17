@@ -1,238 +1,105 @@
+# Schema Design for Smart Clinic Management System
+
+---
+
 ## MySQL Database Design
 
-## Table: patients
-id: INT, Primary Key, AUTO_INCREMENT
+### Table: patients
+- id: INT, Primary Key, AUTO_INCREMENT
+- first_name: VARCHAR(50), NOT NULL
+- last_name: VARCHAR(50), NOT NULL
+- email: VARCHAR(100), NOT NULL, UNIQUE
+- phone: VARCHAR(20), NOT NULL
+- password_hash: VARCHAR(255), NOT NULL
+- date_of_birth: DATE, NULL
+- created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
-name: VARCHAR(100), NOT NULL
+_Notes:_  
+- Emails should be validated via backend logic.  
+- If a patient is deleted, consider cascading delete or soft delete to retain appointment history.
 
-email: VARCHAR(255), UNIQUE, NOT NULL
+---
 
-phone: VARCHAR(20), NOT NULL
+### Table: doctors
+- id: INT, Primary Key, AUTO_INCREMENT
+- first_name: VARCHAR(50), NOT NULL
+- last_name: VARCHAR(50), NOT NULL
+- email: VARCHAR(100), NOT NULL, UNIQUE
+- phone: VARCHAR(20), NOT NULL
+- specialization: VARCHAR(100), NOT NULL
+- password_hash: VARCHAR(255), NOT NULL
+- is_active: BOOLEAN DEFAULT TRUE
+- created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
-gender: ENUM('Male', 'Female', 'Other'), NOT NULL
+_Notes:_  
+- Emails should be unique.  
+- When deleting a doctor, cascading delete should carefully handle associated appointments or mark them as canceled.
 
-date_of_birth: DATE
+---
 
-created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+### Table: appointments
+- id: INT, Primary Key, AUTO_INCREMENT
+- doctor_id: INT, Foreign Key → doctors(id), NOT NULL
+- patient_id: INT, Foreign Key → patients(id), NOT NULL
+- appointment_time: DATETIME, NOT NULL
+- status: INT DEFAULT 0  _(0 = Scheduled, 1 = Completed, 2 = Cancelled)_
+- created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
-> 🔎 Note: Validate email and phone formats via backend validation. Appointments should not be deleted if a patient is removed—consider archiving.
+_Notes:_  
+- Doctor should not have overlapping appointments (enforce via application logic).  
+- Appointments should be retained even if patients or doctors are deleted (consider soft deletes or status flagging).
 
+---
 
-## Table: doctors
-id: INT, Primary Key, AUTO_INCREMENT
+### Table: admin
+- id: INT, Primary Key, AUTO_INCREMENT
+- username: VARCHAR(50), NOT NULL, UNIQUE
+- email: VARCHAR(100), NOT NULL, UNIQUE
+- password_hash: VARCHAR(255), NOT NULL
+- created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
-name: VARCHAR(100), NOT NULL
+_Notes:_  
+- Admins should have strong password policies and multi-factor authentication if possible.
 
-specialization: VARCHAR(100), NOT NULL
+---
 
-email: VARCHAR(255), UNIQUE, NOT NULL
+### Table: clinic_locations _(Optional Extension)_
+- id: INT, Primary Key, AUTO_INCREMENT
+- location_name: VARCHAR(100), NOT NULL
+- address: TEXT, NOT NULL
+- phone: VARCHAR(20), NOT NULL
 
-phone: VARCHAR(20), NOT NULL
+---
 
-clinic_location_id: INT, Foreign Key → clinic_locations(id)
+## MongoDB Collection Design
 
-availability_start: TIME
+### Collection: prescriptions
 
-availability_end: TIME
-
-> 🔎 Note: Prevent overlapping appointments by validating slot times against availability and existing bookings.
-
-
-
-## Table: appointments
-id: INT, Primary Key, AUTO_INCREMENT
-
-doctor_id: INT, Foreign Key → doctors(id), NOT NULL
-
-patient_id: INT, Foreign Key → patients(id), NOT NULL
-
-appointment_time: DATETIME, NOT NULL
-
-duration_minutes: INT DEFAULT 60
-
-status: INT (0 = Scheduled, 1 = Completed, 2 = Cancelled)
-
-> 🧠 Note: Make appointment_time and doctor_id a compound unique key to prevent double booking. Past appointments should be retained for historical tracking.
-
-
-
-## Table: admin
-id: INT, Primary Key, AUTO_INCREMENT
-
-username: VARCHAR(50), UNIQUE, NOT NULL
-
-password_hash: VARCHAR(255), NOT NULL
-
-email: VARCHAR(255), UNIQUE, NOT NULL
-
-role: ENUM('superadmin', 'support'), DEFAULT 'support'
-
-> 🔐 Note: Store password as hashed values. Consider audit logs in MongoDB for admin activities.
-
-
-
-## Table: clinic_locations
-id: INT, Primary Key, AUTO_INCREMENT
-
-name: VARCHAR(255), NOT NULL
-
-address: TEXT, NOT NULL
-
-phone: VARCHAR(20)
-
-email: VARCHAR(255)
-
-
-
-## Table: payments
-id: INT, Primary Key, AUTO_INCREMENT
-
-appointment_id: INT, Foreign Key → appointments(id)
-
-amount: DECIMAL(10,2), NOT NULL
-
-payment_method: ENUM('cash', 'card', 'insurance'), NOT NULL
-
-payment_date: DATE, NOT NULL
-
-> 💳 Note: One-to-one relationship with appointment. Track refunds or disputes separately if needed.
-
-
-
-# MongoDB Collection Design
-
-
-## Collection: messages
-
-
+```json
 {
-  "_id": ObjectId("65f1a3b2c9d4e578f1234567"),
-  "appointmentId": 102,
-  "patientId": 21,
+  "_id": "ObjectId('64abc123456')",
+  "patientId": 12,
   "doctorId": 5,
-  "startedAt": ISODate("2025-07-08T09:00:00Z"),
-  "messages": [
-    {
-      "sender": "patient",
-      "timestamp": ISODate("2025-07-08T09:01:12Z"),
-      "content": "Hello Dr. Lee, I’m feeling better but still have a cough.",
-      "attachments": []
-    },
-    {
-      "sender": "doctor",
-      "timestamp": ISODate("2025-07-08T09:02:45Z"),
-      "content": "Great to hear! Continue the medication. Let me know if symptoms worsen.",
-      "attachments": [
-        {
-          "type": "image",
-          "url": "/uploads/xray-102.jpg",
-          "caption": "Follow-up chest x-ray"
-        }
-      ]
-    }
-  ],
-  "tags": ["follow-up", "respiratory"],
-  "metadata": {
-    "patientDevice": "iOS",
-    "doctorBrowser": "Chrome",
-    "ipAddress": "192.168.0.45"
-  },
-  "createdAt": ISODate("2025-07-08T09:00:00Z"),
-  "updatedAt": ISODate("2025-07-08T09:05:00Z")
-}
-
-
-
-
-## Collection: prescriptions
-
-
-{
-  "_id": ObjectId("66abe124a1e5f23456789abc"),
-  "appointmentId": 42,
-  "patientId": 17,
-  "doctorId": 3,
+  "appointmentId": 51,
+  "patientName": "John Smith",
+  "doctorName": "Dr. Alice Tan",
   "medications": [
     {
-      "name": "Amoxicillin",
+      "name": "Paracetamol",
       "dosage": "500mg",
-      "frequency": "3 times a day",
-      "duration": "7 days"
+      "instructions": "Take 1 tablet every 6 hours."
     },
     {
       "name": "Ibuprofen",
       "dosage": "200mg",
-      "frequency": "As needed",
-      "duration": "5 days"
+      "instructions": "Take after meals."
     }
   ],
+  "doctorNotes": "Monitor temperature daily. Return if symptoms worsen.",
   "refillCount": 2,
   "pharmacy": {
-    "name": "CareWell Pharmacy",
-    "location": "456 Health St.",
-    "phone": "555-1234"
+    "name": "Walgreens SF",
+    "location": "Market Street"
   },
-  "doctorNotes": "Monitor for rash or upset stomach. Follow up in one week.",
-  "tags": ["antibiotic", "pain-relief"],
-  "createdAt": ISODate("2025-07-08T10:30:00Z"),
-  "updatedAt": ISODate("2025-07-08T10:30:00Z")
+  "createdAt": "2025-06-24T09:30:00Z"
 }
-
-
-
-
-## Collection: feedback
-
-{
-  "_id": ObjectId("66dbe999f3a1b23456789cde"),
-  "patientId": 17,
-  "doctorId": 3,
-  "appointmentId": 42,
-  "rating": 4.5,
-  "comments": "Dr. Lee was very attentive and explained everything clearly.",
-  "tags": ["friendly", "clear-explanations"],
-  "submittedAt": ISODate("2025-07-09T14:22:00Z"),
-  "followUpRequested": false
-}
-
-
-
-## logs
-
-
-{
-  "_id": ObjectId("66dbeb22a1f2e34567890abc"),
-  "entity": "patient",
-  "entityId": 17,
-  "action": "login",
-  "performedBy": "patient",
-  "timestamp": ISODate("2025-07-09T14:30:45Z"),
-  "metadata": {
-    "ip": "203.0.113.42",
-    "userAgent": "Mozilla/5.0 (Windows NT)"
-  }
-}
-
-
-or 
-
-
-{
-  "_id": ObjectId("66dbeb22a1f2e34567890abc"),
-  "userType": "patient",
-  "userId": 17,
-  "action": "login",
-  "target": "appointments",
-  "targetId": 42,
-  "timestamp": ISODate("2025-07-09T14:30:45Z"),
-  "metadata": {
-    "ip": "203.0.113.42",
-    "userAgent": "Mozilla/5.0 (Windows NT)"
-  }
-}
-
-
-
-
-
-
